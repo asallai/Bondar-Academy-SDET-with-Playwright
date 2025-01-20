@@ -47,14 +47,14 @@ test.describe('Date picker', async () => {
 		const todaysVisitYear = date.getFullYear()
 		const todaysVisitMonth = date.toLocaleString('en-US', { month: '2-digit' })
 		const todaysVisitDay = date.toLocaleString('en-US', { day: '2-digit' })
-		const todaysVisitDate = `${todaysVisitYear}-${todaysVisitMonth}-${todaysVisitDay}`
+		const todaysVisitDateWithDash = `${todaysVisitYear}-${todaysVisitMonth}-${todaysVisitDay}`
 
 		date.setDate(date.getDate() - 45)
 		const previousVisitYear = date.getFullYear()
 		const previousVisitMonth = date.toLocaleString('en-US', { month: '2-digit' })
 		const previousVisitDay2Digit = date.toLocaleString('en-US', { day: '2-digit' })
 		const previousVisitDayNumeric = date.toLocaleString('en-US', { day: 'numeric' })
-		const previousVisitDate = `${previousVisitYear}-${previousVisitMonth}-${previousVisitDay2Digit}`
+		const previousVisitDateWithDash = `${previousVisitYear}-${previousVisitMonth}-${previousVisitDay2Digit}`
 
 		const petSection = page.locator('app-pet-list', { hasText: 'Samantha' })
 		const petVisitRows = petSection.locator('app-visit-list tr')
@@ -72,7 +72,7 @@ test.describe('Date picker', async () => {
 		await page.locator('#description').fill('dermatology visit')
 		await page.getByRole('button', { name: 'Add Visit' }).click()
 		await expect(page.getByRole('heading').nth(0)).toHaveText('Owner Information')
-		await expect(petSection.locator('app-visit-list tr td').nth(0)).toHaveText(todaysVisitDate)
+		await expect(petSection.locator('app-visit-list tr td').nth(0)).toHaveText(todaysVisitDateWithDash)
 
 		await petSection.getByRole('button', { name: 'Add Visit' }).click()
 		await page.getByLabel('Open calendar').click()
@@ -89,18 +89,18 @@ test.describe('Date picker', async () => {
 		await page.locator('#description').fill('massage therapy')
 		await page.getByRole('button', { name: 'Add Visit' }).click()
 
-		const laterVisitDateText = await petVisitRows.nth(2).locator('td').first().textContent()
-		const formerVisitDateText = await petVisitRows.nth(3).locator('td').first().textContent()
-		const laterVisitDate = new Date(laterVisitDateText!)
-		const formerVisitDate = new Date(formerVisitDateText!)
-		expect(laterVisitDate! > formerVisitDate!).toBeTruthy()
+		const todaysVisitDateText = await petVisitRows.filter({ hasText: todaysVisitDateWithDash }).locator('td').first().textContent()
+		const previousVisitDateText = await petVisitRows.filter({ hasText: previousVisitDateWithDash }).locator('td').first().textContent()
+		const todaysVisitDate = new Date(todaysVisitDateText!)
+		const previousVisitDate = new Date(previousVisitDateText!)
+		expect(todaysVisitDate! > previousVisitDate!).toBeTruthy()
 
-		await petVisitRows.filter({ hasText: todaysVisitDate }).getByText('Delete Visit').click()
-		await petVisitRows.filter({ hasText: previousVisitDate }).getByText('Delete Visit').click()
+		await petVisitRows.filter({ hasText: todaysVisitDateWithDash }).getByText('Delete Visit').click()
+		await petVisitRows.filter({ hasText: previousVisitDateWithDash }).getByText('Delete Visit').click()
 		await page.waitForResponse(`https://petclinic-api.bondaracademy.com/petclinic/api/visits/*`)
 
 		const petVisitSectionTexts = await petVisitRows.locator('td').allTextContents()
-		expect(petVisitSectionTexts).not.toContain(todaysVisitDate)
-		expect(petVisitSectionTexts).not.toContain(previousVisitDate)
+		expect(petVisitSectionTexts).not.toContain(todaysVisitDateWithDash)
+		expect(petVisitSectionTexts).not.toContain(previousVisitDateWithDash)
 	})
 })
