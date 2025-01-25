@@ -1,21 +1,22 @@
 import { test, expect } from '@playwright/test'
+import { PageManager } from '../page-objects/pageManager'
 
 test.describe('Lists and Dropdowns', async () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/')
-		await page.getByText('Owners').click()
-		await page.getByText('Search').click()
-		await expect(page.getByRole('heading')).toHaveText('Owners')
 	})
 
 	test('Validate selected pet types from the list', async ({ page }) => {
 		const ownerFullName = 'George Franklin'
 		const petTypeField = page.locator('#type1')
 
+		const pm = new PageManager(page)
+		await pm.navigationTo().ownersPage()
+
 		await page.getByRole('link', { name: ownerFullName }).click()
 		await expect(page.locator('.ownerFullName')).toHaveText(ownerFullName)
 
-		await page.locator('app-pet-list', { hasText: 'Leo '}).getByRole('button', { name: 'Edit Pet' }).click()
+		await page.locator('app-pet-list', { hasText: 'Leo ' }).getByRole('button', { name: 'Edit Pet' }).click()
 		await expect(page.getByRole('heading')).toHaveText('Pet')
 		await expect(page.locator('#owner_name')).toHaveValue(ownerFullName)
 		await expect(petTypeField).toHaveValue('cat')
@@ -38,6 +39,9 @@ test.describe('Lists and Dropdowns', async () => {
 		const petTypeField = page.locator('#type1')
 		const petTypeDropdown = page.getByLabel('Type')
 		const petRosySection = page.locator('app-pet-list', { hasText: 'Rosy' })
+
+		const pm = new PageManager(page)
+		await pm.navigationTo().ownersPage()
 
 		await page.getByRole('link', { name: 'Eduardo Rodriquez' }).click()
 

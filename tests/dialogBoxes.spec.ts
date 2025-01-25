@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { PageManager } from '../page-objects/pageManager'
 
 test('Add and delete pet type', async ({ page }) => {
 	const petTypeListSection = page.locator('app-pettype-list')
@@ -6,8 +7,8 @@ test('Add and delete pet type', async ({ page }) => {
 	const lastRow = page.locator('tr').last()
 
 	await page.goto('/')
-	await page.getByText('Pet Types').click()
-	await expect(petTypeListSection.getByRole('heading')).toHaveText('Pet Types')
+	const pm = new PageManager(page)
+	await pm.navigationTo().petTypesPage()
 	await expect(petTypeListSection.getByRole('table')).toBeVisible()
 	
 	await page.getByRole('button', { name: 'Add' }).click()

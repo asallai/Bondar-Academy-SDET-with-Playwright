@@ -1,10 +1,9 @@
 import { test, expect } from '@playwright/test'
+import { PageManager } from '../page-objects/pageManager'
 
 test.describe('Date picker', async () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/')
-		await page.getByText('Owner').click()
-		await page.getByText('Search').click()
 	})
 
 	test('Select the desired Date in the calendar', async ({ page }) => {
@@ -16,6 +15,9 @@ test.describe('Date picker', async () => {
 		const petSection = page.locator('app-pet-list', { hasText: 'Tom' })
 		const nameSection = page.locator('.form-group', { hasText: 'Name' })
 		const glyphIcon = nameSection.locator('span')
+
+		const pm = new PageManager(page)
+		await pm.navigationTo().ownersPage()
 
 		await page.getByRole('link', { name: 'Harold Davis' }).click()
 		await page.getByRole('button', { name: 'Add New Pet' }).click()
@@ -58,6 +60,9 @@ test.describe('Date picker', async () => {
 
 		const petSection = page.locator('app-pet-list', { hasText: 'Samantha' })
 		const petVisitRows = petSection.locator('app-visit-list tr')
+
+		const pm = new PageManager(page)
+		await pm.navigationTo().ownersPage()
 
 		await page.getByRole('link', { name: 'Jean Coleman' }).click()
 		await petSection.getByText('Add Visit').click()

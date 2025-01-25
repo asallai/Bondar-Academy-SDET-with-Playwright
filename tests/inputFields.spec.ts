@@ -1,10 +1,9 @@
 import { test, expect } from '@playwright/test'
+import { PageManager } from '../page-objects/pageManager'
 
 test.describe('Input fields', async () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/')
-		await page.getByText('Pet Types').click()
-		await expect(page.getByRole('heading')).toHaveText('Pet Types')
 	})
 
 	test('Update pet type', async ({ page }) => {
@@ -20,6 +19,8 @@ test.describe('Input fields', async () => {
 		const petTypeUpdateButton = page.getByRole('button', { name: 'Update' })
 
 		// Test steps
+		const pm = new PageManager(page)
+		await pm.navigationTo().petTypesPage()
 		await firstEditButton.click()
 		await expect(page.getByRole('heading')).toHaveText('Edit Pet Type')
 
@@ -44,6 +45,9 @@ test.describe('Input fields', async () => {
 		const petTypeInput = page.locator('#name')
 
 		// Test steps
+		const pm = new PageManager(page)
+		await pm.navigationTo().petTypesPage()
+
 		await page.getByRole('button', { name: 'Edit' }).nth(1).click()
 		await petTypeInput.click()
 		await petTypeInput.fill(newPetType)
@@ -58,6 +62,9 @@ test.describe('Input fields', async () => {
 		const petTypeInput = page.locator('#name')
 
 		// Test steps
+		const pm = new PageManager(page)
+		await pm.navigationTo().petTypesPage()
+
 		await page.getByRole('button', { name: 'Edit' }).nth(2).click()
 		await petTypeInput.click()
 		await petTypeInput.clear()

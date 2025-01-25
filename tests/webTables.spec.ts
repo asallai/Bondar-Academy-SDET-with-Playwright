@@ -1,28 +1,34 @@
 import { test, expect } from '@playwright/test'
+import { PageManager } from '../page-objects/pageManager'
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/')
 })
 
 test.describe('Web Tables - Owners', async () => {
-	test.beforeEach(async ({ page }) => {
-		await page.getByText('Owners').click()
-		await page.getByText('Search').click()
-		await expect(page.getByRole('button', { name: 'Add owner' })).toBeVisible()
-	})
-
 	test('Validate the pet name and city of the owner', async ({ page }) => {
 		const ownerRow = page.getByRole('row', { name: 'Jeff Black' })
+
+		const pm = new PageManager(page)
+		await pm.navigationTo().ownersPage()
+		await expect(page.getByRole('button', { name: 'Add owner' })).toBeVisible()
 		await expect(ownerRow.locator('td').nth(2)).toHaveText('Monona')
 		await expect(ownerRow.locator('td').last()).toHaveText('Lucky')
 	})
 
 	test('Validate owners count of the Madison city', async ({ page }) => {
+		const pm = new PageManager(page)
+		await pm.navigationTo().ownersPage()
+		await expect(page.getByRole('button', { name: 'Add owner' })).toBeVisible()
 		await expect(page.getByRole('row', { name: 'Madison' })).toHaveCount(4)
 	})
 
 	test('Validate search by Last Name', async ({ page }) => {
 		const lastNames = ['Black', 'Davis', 'Es', 'Playwright']
+
+		const pm = new PageManager(page)
+		await pm.navigationTo().ownersPage()
+		await expect(page.getByRole('button', { name: 'Add owner' })).toBeVisible()
 
 		for (let lastName of lastNames) {
 			await page.getByRole('textbox').fill(lastName)
@@ -43,6 +49,10 @@ test.describe('Web Tables - Owners', async () => {
 		const ownerPhoneNumber = '6085552765'
 
 		const ownerRow = page.getByRole('row', { name: ownerPhoneNumber })
+
+		const pm = new PageManager(page)
+		await pm.navigationTo().ownersPage()
+		await expect(page.getByRole('button', { name: 'Add owner' })).toBeVisible()
 		const ownerPetName = await ownerRow.locator('td').last().textContent()
 
 		await ownerRow.getByRole('link').click()
@@ -53,6 +63,10 @@ test.describe('Web Tables - Owners', async () => {
 	test('Validate pets of the Madison city', async ({ page }) => {
 		const expectedPetNames = ['Leo', 'George', 'Mulligan', 'Freddy']
 		const madisonCityRows = page.getByRole('row', { name: 'Madison' })
+
+		const pm = new PageManager(page)
+		await pm.navigationTo().ownersPage()
+		await expect(page.getByRole('button', { name: 'Add owner' })).toBeVisible()
 
 		let actualPetNames: string[] = []
 		for (let madisonCityRow of await madisonCityRows.all()) {
@@ -70,6 +84,10 @@ test('Validate specialty update', async ({ page }) => {
 		{ specialty: 'surgery', newSpecialty: 'dermatology' },
 		{ specialty: 'dermatology', newSpecialty: 'surgery' },
 	]
+
+	const pm = new PageManager(page)
+	await pm.navigationTo().ownersPage()
+	await expect(page.getByRole('button', { name: 'Add owner' })).toBeVisible()
 
 	for (let { specialty, newSpecialty } of specialties) {
 		await page.getByRole('button', { name: 'Veterinarians' }).click()
@@ -95,6 +113,10 @@ test('Validate specialty lists', async ({ page }) => {
 	const specialtiesMenuItem = page.getByRole('link', { name: 'Specialties' })
 	const vetsMenuItem = page.getByRole('button', { name: 'Veterinarians' })
 	const allVetsDropdownItem = page.getByRole('link', { name: 'All' })
+
+	const pm = new PageManager(page)
+	await pm.navigationTo().ownersPage()
+	await expect(page.getByRole('button', { name: 'Add owner' })).toBeVisible()
 
 	await specialtiesMenuItem.click()
 	await page.getByRole('button', { name: 'Add' }).click()

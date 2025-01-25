@@ -1,11 +1,9 @@
 import { test, expect } from '@playwright/test'
+import { PageManager } from '../page-objects/pageManager'
 
 test.describe('Checkboxes', async () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/')
-		await page.getByText('Veterinarians').click()
-		await page.getByText('All').click()
-		await expect(page.getByRole('heading')).toHaveText('Veterinarians')
+		await page.goto('/')		
 	})
 
 	test('Validate selected specialties', async ({ page }) => {
@@ -13,6 +11,9 @@ test.describe('Checkboxes', async () => {
 		const radiologyCheckbox = page.getByRole('checkbox', { name: 'radiology' })
 		const surgeryCheckbox = page.getByRole('checkbox', { name: 'surgery' })
 		const dentistryCheckbox = page.getByRole('checkbox', { name: 'dentistry' })
+
+		const pm = new PageManager(page)
+		await pm.navigationTo().veterinarsPage()
 
 		await page.getByRole('button', { name: 'Edit vet' }).nth(1).click()
 		await expect(selectedSpecialtyDropdown).toHaveText('radiology')
@@ -34,6 +35,9 @@ test.describe('Checkboxes', async () => {
 		const selectedSpecialtyDropdown = page.locator('.selected-specialties')
 		const specialtiesDropdown = page.locator('.dropdown-content label')
 
+		const pm = new PageManager(page)
+		await pm.navigationTo().veterinarsPage()
+
 		await page.getByRole('button', { name: 'Edit vet' }).nth(3).click()
 		await expect(selectedSpecialtyDropdown).toHaveText('surgery')
 
@@ -48,6 +52,9 @@ test.describe('Checkboxes', async () => {
 	test('Unselect all specialties', async ({ page }) => {
 		const selectedSpecialtyDropdown = page.locator('.selected-specialties')
 		const specialtiesDropdown = page.locator('.dropdown-content label')
+
+		const pm = new PageManager(page)
+		await pm.navigationTo().veterinarsPage()
 
 		await page.getByRole('button', { name: 'Edit vet' }).nth(2).click()
 		await expect(selectedSpecialtyDropdown).toHaveText('dentistry, surgery')
