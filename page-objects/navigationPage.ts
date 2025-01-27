@@ -10,6 +10,7 @@ export class NavigationPage {
 	async petTypesPage() {
 		await this.page.getByText('Pet Types').click()
 		await expect(this.page.getByRole('heading')).toHaveText('Pet Types')
+		await this.page.waitForResponse(`https://petclinic-api.bondaracademy.com/petclinic/api/pettypes`)
 	}
 
 	async petDetailsPage() {
@@ -22,9 +23,6 @@ export class NavigationPage {
 		await this.page.getByText('Search').click()
 		await expect(this.page.getByRole('heading')).toHaveText('Owners')
 	}
-
-	// async ownerInformationPage() {		
-	// }
 
 	async veterinarsPage() {
 		await this.page.getByText('Veterinarians').click()

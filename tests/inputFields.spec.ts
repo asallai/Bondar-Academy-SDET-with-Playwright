@@ -7,59 +7,46 @@ test.describe('Input fields', async () => {
 	})
 
 	test('Update pet type', async ({ page }) => {
-		// Test data
 		const originalPetType = 'cat'
 		const newPetType = 'rabbit'
 
-		// Locators - Pet Types table page
-		const firstEditButton = page.getByRole('button', { name: 'Edit' }).first()
-		const firstPetTypeInput = page.locator('[name="pettype_name"]').first()
-		// Locators - Edit Pet Types page
-		const petTypeInput = page.locator('#name')
-		const petTypeUpdateButton = page.getByRole('button', { name: 'Update' })
-
-		// Test steps
 		const pm = new PageManager(page)
 		await pm.navigationTo().petTypesPage()
-		await firstEditButton.click()
-		await expect(page.getByRole('heading')).toHaveText('Edit Pet Type')
+		await pm.onPetTypesPage().selectEditPetTypeInTheNthRow(0)
+		await pm.onPetTypeEditPage().updatePetTypeTo(newPetType)
+		await pm.onPetTypesPage().validatePetTypeInTheNthRowIs(newPetType, 0)
 
-		await petTypeInput.click()
-		await petTypeInput.fill(newPetType)
-		await petTypeUpdateButton.click()
-		await expect(firstPetTypeInput).toHaveValue(newPetType)
-
-		await firstEditButton.click()
-		await petTypeInput.click()
-		await petTypeInput.fill(originalPetType)
-		await petTypeUpdateButton.click()
-		await expect(firstPetTypeInput).toHaveValue(originalPetType)
+		await pm.onPetTypesPage().selectEditPetTypeInTheNthRow(0)
+		await pm.onPetTypeEditPage().updatePetTypeTo(originalPetType)
+		await pm.onPetTypesPage().validatePetTypeInTheNthRowIs(originalPetType, 0)
 	})
 
 	test('Cancel pet type update', async ({ page }) => {
-		// Test data
 		const originalPetType = 'dog'
 		const newPetType = 'moose'
 
-		// Locator - Edit Pet Type page
-		const petTypeInput = page.locator('#name')
-
-		// Test steps
 		const pm = new PageManager(page)
 		await pm.navigationTo().petTypesPage()
-
-		await page.getByRole('button', { name: 'Edit' }).nth(1).click()
-		await petTypeInput.click()
-		await petTypeInput.fill(newPetType)
-		await expect(petTypeInput).toHaveValue(newPetType)
-
-		await page.getByRole('button', { name: 'Cancel' }).click()
-		await expect(page.locator('[name="pettype_name"]').nth(1)).toHaveValue(originalPetType)
+		await pm.onPetTypesPage().selectEditPetTypeInTheNthRow(1)
+		await pm.onPetTypeEditPage().fillPetTypeWith(newPetType)
+		await pm.onPetTypeEditPage().validatePetTypeInTheInputFieldIs(newPetType)
+		await pm.onPetTypeEditPage().cancelPetTypeUpdate()
+		await pm.onPetTypesPage().validatePetTypeInTheNthRowIs(originalPetType, 1)
 	})
 
 	test('Pet type name is required validation', async ({ page }) => {
 		// Locator - Edit Pet Type page
 		const petTypeInput = page.locator('#name')
+
+		// 1. Select the PET TYPES menu item in the navigation bar
+		// 2. Add assertion of the "Pet Types" text displayed above the table with the list of pet types
+		// 3. Click on "Edit" button for the "lizard" pet type
+		// 4. On the Edit Pet Type page, clear the input field
+		// 5. Add the assertion for the "Name is required" message below the input field
+		// 6. Click on "Update" button
+		// 7. Add assertion that "Edit Pet Type" page is still displayed
+		// 8. Click on the "Cancel" button
+		// 9. Add assertion that "Pet Types" page is displayed
 
 		// Test steps
 		const pm = new PageManager(page)
